@@ -422,16 +422,28 @@
   }
 
   // envelope open
+  const openSound = new Audio('open.mp3');
   const envelope = document.getElementById('envelope');
   envelope.addEventListener('click', () => {
     envelope.classList.add('open');
+    openSound.currentTime = 0;
+    openSound.play().catch(() => {});
     setTimeout(() => goTo(cakeScreen), 700);
   });
+
+  // ---------- Âm thanh thổi nến ----------
+  // File "thoi.mp3" phải đặt cùng thư mục với index.html
+  const blowSound = new Audio('thoi.mp3');
 
   // blow candles
   const blowBtn = document.getElementById('blowBtn');
   blowBtn.addEventListener('click', () => {
     blowBtn.disabled = true;
+
+    // phát âm thanh khi bấm thổi nến
+    blowSound.currentTime = 0;
+    blowSound.play().catch(() => {});
+
     document.querySelectorAll('.candle-flame').forEach((f, i) => {
       setTimeout(() => {
         f.style.opacity = '0';
@@ -478,7 +490,19 @@
     });
   }
 
+  // Âm thanh pháo hoa khi nổ (file "phao.mp3" cùng thư mục với index.html)
+  const explodeSound = new Audio('phao.mp3');
+  explodeSound.volume = 0.4;
+
+  function playExplodeSound() {
+    // clone để có thể phát chồng nhiều tiếng nổ cùng lúc
+    const s = explodeSound.cloneNode();
+    s.volume = 0.4;
+    s.play().catch(() => {});
+  }
+
   function explode(x, y, color) {
+    playExplodeSound();
     const count = 40;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count;
@@ -569,8 +593,11 @@
     }
   });
 
+  const yaySound = new Audio('yay.mp3');
   yesBtn.addEventListener('click', () => {
     yayMsg.style.display = 'block';
+    yaySound.currentTime = 0;
+    yaySound.play().catch(() => {});
     yesBtn.disabled = true;
     noBtn.disabled = true;
     noBtn.style.opacity = noScale <= 0.15 ? '0' : '0.4';
