@@ -263,6 +263,58 @@
     font-style: italic;
   }
 
+  #questionSection {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px dashed #ffb6d9;
+  }
+  #questionSection p {
+    color: #d6336c;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  .qa-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    min-height: 60px;
+  }
+  .qa-btn {
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 12px 26px;
+    font-size: 15px;
+    transition: transform 0.25s ease, opacity 0.25s ease, padding 0.25s ease, font-size 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  #yesBtn {
+    background: linear-gradient(135deg, #06d6a0, #1b9d77);
+    color: white;
+  }
+  #noBtn {
+    background: linear-gradient(135deg, #ff6fa5, #d6336c);
+    color: white;
+  }
+  #yayMsg {
+    display: none;
+    margin-top: 18px;
+    font-size: 26px;
+    font-weight: bold;
+    color: #ff2e93;
+    text-shadow: 0 0 10px rgba(255,46,147,0.4);
+    animation: pop 0.5s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    70% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
   canvas#fireworks {
     position: fixed;
     top: 0; left: 0;
@@ -306,8 +358,8 @@
 
 <!-- SCREEN 3 -->
 <div class="screen" id="cakeScreen">
-  <h2>🎂 Bánh sinh nhật đã sẵn sàng!</h2>
-  <p class="sub">Nhấn nút bên dưới để thổi nến nào~</p>
+  <h2>🎂 Bánh sinh nè :D</h2>
+  <p class="sub">Thổi nến đi~</p>
   <div class="cake-wrap" id="cakeWrap">
     <div class="candle candle1"><div class="candle-flame"></div></div>
     <div class="candle candle2"><div class="candle-flame"></div></div>
@@ -328,7 +380,16 @@
   <div class="deco">🎈🎂🎈</div>
   <h2>Chúc mừng sinh nhật Minh Trang</h2>
   <p>Chúc những điều tốt nhất sẽ đến với cậu!</p>
-  <div class="signature">Háp bi bớt đây 💕</div>
+  <div class="signature">Háp bi bớt đây tu diu 💕</div>
+
+  <div id="questionSection">
+    <p>Cậu có thích món quà này không?</p>
+    <div class="qa-buttons">
+      <button class="qa-btn" id="yesBtn">Có</button>
+      <button class="qa-btn" id="noBtn">Không</button>
+    </div>
+    <div id="yayMsg">yayyyyyyyy !!! 🥳🎉</div>
+  </div>
 </div>
 
 <script>
@@ -483,6 +544,38 @@
     fwParticles = [];
     fwRunning = false;
   }
+
+  // ---------- Câu hỏi Có / Không ----------
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const yayMsg = document.getElementById('yayMsg');
+
+  let noScale = 1;
+  let yesScale = 1;
+  const STEP = 0.22;
+
+  function applyScale() {
+    noBtn.style.transform = `scale(${noScale})`;
+    yesBtn.style.transform = `scale(${yesScale})`;
+    noBtn.style.opacity = noScale <= 0.15 ? '0' : '1';
+  }
+
+  noBtn.addEventListener('click', () => {
+    noScale = Math.max(noScale - STEP, 0);
+    yesScale = Math.min(yesScale + STEP, 2.2);
+    applyScale();
+    if (noScale <= 0) {
+      noBtn.style.display = 'none';
+    }
+  });
+
+  yesBtn.addEventListener('click', () => {
+    yayMsg.style.display = 'block';
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+    noBtn.style.opacity = noScale <= 0.15 ? '0' : '0.4';
+    yesBtn.style.cursor = 'default';
+  });
 </script>
 
 </body>
