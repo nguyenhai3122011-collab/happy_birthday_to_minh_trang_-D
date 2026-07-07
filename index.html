@@ -1,406 +1,489 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday Minh Trang!</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ffe4e1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+<meta charset="UTF-8">
+<title>Chúc mừng sinh nhật Minh Trang</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #2b1055, #7597de);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
 
-        /* --- 1. MÀN HÌNH NHẬP CODE --- */
-        #auth-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffb6c1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            transition: opacity 0.5s ease;
-        }
-        .box-auth {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .box-auth h2 { color: #ff69b4; margin-bottom: 20px; }
-        .box-auth input {
-            padding: 10px;
-            width: 200px;
-            border: 2px solid #ffb6c1;
-            border-radius: 8px;
-            outline: none;
-            text-align: center;
-            font-size: 16px;
-        }
-        .box-auth button {
-            padding: 10px 20px;
-            background: #ff69b4;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            margin-left: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .box-auth button:hover { background: #ff1493; }
-        .error-msg { color: red; margin-top: 10px; font-size: 14px; display: none; }
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    animation: fadeIn 0.8s ease;
+    z-index: 2;
+  }
+  .screen.active { display: flex; }
 
-        /* --- 2. GIAO DIỆN CHÍNH (ẨN LÚC ĐẦU) --- */
-        #main-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            perspective: 1000px; /* Tạo độ sâu cho thiệp */
-        }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        /* --- 3. THIỆP 3D VÀ BÁNH --- */
-        .card {
-            width: 300px;
-            height: 350px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s ease;
-            cursor: pointer;
-        }
-        .card.open {
-            transform: rotateY(-140deg);
-            margin-left: 150px;
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .card-front {
-            background: #ff69b4;
-            color: white;
-            z-index: 2;
-        }
-        .card-front h1 { font-size: 24px; text-align: center; }
-        .card-front p { margin-top: 20px; font-size: 14px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 20px;}
-        
-        .card-back {
-            background: #fff0f5;
-            transform: rotateY(180deg);
-            z-index: 1;
-        }
+  /* ---------- SCREEN 1: nhập mã ---------- */
+  #codeScreen h1 {
+    color: #ffe6f7;
+    font-size: 28px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 12px rgba(255,182,230,0.6);
+  }
+  #codeScreen p {
+    color: #dcd3ff;
+    margin-bottom: 24px;
+    font-size: 15px;
+  }
+  #codeInput {
+    padding: 12px 18px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    text-align: center;
+    width: 240px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  #submitCode {
+    margin-top: 16px;
+    padding: 12px 30px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #ff9ecb, #ff6fa5);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,111,165,0.5);
+    transition: transform 0.2s;
+  }
+  #submitCode:hover { transform: scale(1.06); }
+  #errorMsg {
+    margin-top: 14px;
+    color: #ffb3b3;
+    font-size: 14px;
+    height: 18px;
+  }
 
-        /* Bánh sinh nhật bên trong thiệp (xuất hiện khi mở) */
-        .cake-container {
-            display: none;
-            opacity: 0;
-            transition: opacity 1s ease;
-            flex-direction: column;
-            align-items: center;
-            margin-top: -300px; /* Đẩy lên vị trí trung tâm sau khi thiệp mở lệch */
-            z-index: 5;
-        }
-        /* Vẽ bánh bằng CSS */
-        .cake {
-            width: 150px;
-            height: 100px;
-            background: #f4c2c2;
-            border-radius: 10px 10px 0 0;
-            position: relative;
-            margin-top: 40px;
-            box-shadow: inset 0 10px 0 #f08080, 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .cake::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 20px;
-            background: #fff;
-            top: 30px; left: 0;
-            box-shadow: 0 25px 0 #fff;
-        }
-        .candle {
-            width: 12px;
-            height: 40px;
-            background: linear-gradient(to right, #6fa8dc, #9fc5e8);
-            position: absolute;
-            top: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 3px;
-        }
-        .flame {
-            width: 12px;
-            height: 18px;
-            background: #ffaa00;
-            border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
-            position: absolute;
-            top: -22px;
-            left: 0;
-            animation: flicker 0.5s ease-in-out infinite alternate;
-            box-shadow: 0 0 10px #ffaa00;
-        }
-        @keyframes flicker {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1) rotate(2deg); }
-        }
-        .candle.off .flame {
-            display: none;
-        }
+  /* ---------- SCREEN 2: thiệp đóng ---------- */
+  #cardScreen h2 {
+    color: #ffe6f7;
+    margin-bottom: 30px;
+    font-size: 22px;
+  }
+  .envelope {
+    width: 260px;
+    height: 180px;
+    position: relative;
+    cursor: pointer;
+    perspective: 1000px;
+  }
+  .envelope-body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff0f6, #ffd6ea);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    z-index: 1;
+  }
+  .envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-left: 130px solid transparent;
+    border-right: 130px solid transparent;
+    border-top: 100px solid #ffb6d9;
+    transform-origin: top;
+    transition: transform 0.6s ease;
+    z-index: 3;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+  }
+  .envelope.open .envelope-flap {
+    transform: rotateX(180deg);
+  }
+  .heart-seal {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    z-index: 4;
+    transition: opacity 0.3s;
+  }
+  .envelope.open .heart-seal { opacity: 0; }
+  .hint {
+    margin-top: 20px;
+    color: #f5e1ff;
+    font-size: 13px;
+    opacity: 0.8;
+  }
 
-        /* Nút thổi nến */
-        .btn-blow {
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: #ff1493;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
-            transition: transform 0.2s;
-        }
-        .btn-blow:hover { transform: scale(1.05); }
+  /* ---------- SCREEN 3: bánh + nến ---------- */
+  #cakeScreen h2 {
+    color: #ffe6f7;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  #cakeScreen p.sub {
+    color: #e0d4ff;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .cake-wrap {
+    position: relative;
+    width: 240px;
+    height: 220px;
+    margin: 10px 0 20px;
+  }
+  .candle-flame {
+    width: 8px;
+    height: 16px;
+    background: radial-gradient(circle, #fff3b0, #ffb703 60%, #fb8500);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px 3px rgba(255,183,3,0.8);
+    animation: flicker 0.4s infinite alternate;
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  @keyframes flicker {
+    from { transform: translateX(-50%) scale(1) rotate(-2deg); }
+    to   { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+  }
+  .candle {
+    position: absolute;
+    bottom: 130px;
+    width: 8px;
+    height: 40px;
+    background: repeating-linear-gradient(45deg, #ff5da2, #ff5da2 4px, #fff 4px, #fff 8px);
+    border-radius: 2px;
+  }
+  .candle1 { left: 60px; }
+  .candle2 { left: 116px; }
+  .candle3 { left: 172px; }
 
-        /* --- 4. LỜI CHÚC VÀ PHÁO HOA --- */
-        .wishes-box {
-            display: none;
-            text-align: center;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 90%;
-            animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            z-index: 6;
-        }
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .wishes-box h2 { color: #ff1493; margin-bottom: 15px; font-size: 24px;}
-        .wishes-box p { color: #555; font-size: 18px; line-height: 1.5; font-weight: 500;}
+  .cake-top {
+    position: absolute;
+    bottom: 90px;
+    left: 30px;
+    width: 180px;
+    height: 40px;
+    background: #fff0f6;
+    border-radius: 20px 20px 0 0;
+    box-shadow: inset 0 -6px 0 rgba(255,182,213,0.6);
+  }
+  .cake-mid {
+    position: absolute;
+    bottom: 45px;
+    left: 15px;
+    width: 210px;
+    height: 50px;
+    background: #ffd6ea;
+    border-radius: 14px;
+    box-shadow: inset 0 -8px 0 rgba(255,143,190,0.5);
+  }
+  .cake-base {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 240px;
+    height: 50px;
+    background: #ff8fbe;
+    border-radius: 14px;
+    box-shadow: inset 0 -10px 0 rgba(214,64,122,0.5);
+  }
+  .drip {
+    position: absolute;
+    bottom: 85px;
+    width: 10px;
+    height: 16px;
+    background: #ffb6d9;
+    border-radius: 0 0 8px 8px;
+  }
 
-        canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 9;
-        }
-    </style>
+  #blowBtn {
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #ffb6d9, #ff6fa5);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,111,165,0.5);
+    transition: transform 0.2s;
+  }
+  #blowBtn:hover { transform: scale(1.06); }
+  #blowBtn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+  /* ---------- SCREEN 4: thiệp cuối ---------- */
+  #finalScreen {
+    background: linear-gradient(135deg, #fff5fa, #ffe1f0);
+    border-radius: 18px;
+    padding: 40px 34px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    max-width: 420px;
+  }
+  #finalScreen .deco {
+    font-size: 34px;
+    margin-bottom: 10px;
+  }
+  #finalScreen h2 {
+    color: #d6336c;
+    font-size: 24px;
+    margin: 6px 0 16px;
+  }
+  #finalScreen p {
+    color: #6a4c93;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  #finalScreen .signature {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #b5838d;
+    font-style: italic;
+  }
+
+  canvas#fireworks {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .stars {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+</style>
 </head>
 <body>
 
-    <div id="auth-screen">
-        <div class="box-auth">
-            <h2>Nhập mã để mở quà ẩn nè! 😉</h2>
-            <input type="text" id="code-input" placeholder="Nhập code vào đây...">
-            <button onclick="checkCode()">Mở</button>
-            <p class="error-msg" id="error-msg">Sai code rồi cậu ơi, thử lại xem nào! 👀</p>
-        </div>
-    </div>
+<canvas id="fireworks"></canvas>
 
-    <div id="main-content">
-        <div class="card" id="birthday-card" onclick="openCard()">
-            <div class="card-front">
-                <h1>Gửi Minh Trang... 🌸</h1>
-                <p>Bấm vào để mở thiệp nha</p>
-            </div>
-            <div class="card-back">
-                </div>
-        </div>
+<!-- SCREEN 1 -->
+<div class="screen active" id="codeScreen">
+  <h1>💌 Có một điều bí mật...</h1>
+  <p>Nhập mã bí mật để mở khoá lời chúc nhé!</p>
+  <input type="text" id="codeInput" placeholder="Nhập code..." autocomplete="off">
+  <br>
+  <button id="submitCode">Mở khoá</button>
+  <div id="errorMsg"></div>
+</div>
 
-        <div class="cake-container" id="cake-container">
-            <div class="cake">
-                <div class="candle" id="candle">
-                    <div class="flame"></div>
-                </div>
-            </div>
-            <button class="btn-blow" id="blow-btn" onclick="blowCandle()">Thổi nến ước nguyện 🎂</button>
-        </div>
+<!-- SCREEN 2 -->
+<div class="screen" id="cardScreen">
+  <h2>🎉 Chạm vào thiệp để mở nhé!</h2>
+  <div class="envelope" id="envelope">
+    <div class="envelope-body"></div>
+    <div class="envelope-flap"></div>
+    <div class="heart-seal">💖</div>
+  </div>
+  <div class="hint">(nhấn vào thiệp)</div>
+</div>
 
-        <div class="wishes-box" id="wishes-box">
-            <h2>Chúc mừng sinh nhật Minh Trang 🎉</h2>
-            <p>Chúc những điều tốt nhất sẽ đến với cậu!</p>
-        </div>
-    </div>
+<!-- SCREEN 3 -->
+<div class="screen" id="cakeScreen">
+  <h2>🎂 Bánh sinh nhật đã sẵn sàng!</h2>
+  <p class="sub">Nhấn nút bên dưới để thổi nến nào~</p>
+  <div class="cake-wrap" id="cakeWrap">
+    <div class="candle candle1"><div class="candle-flame"></div></div>
+    <div class="candle candle2"><div class="candle-flame"></div></div>
+    <div class="candle candle3"><div class="candle-flame"></div></div>
+    <div class="cake-top"></div>
+    <div class="drip" style="left:40px;"></div>
+    <div class="drip" style="left:90px;"></div>
+    <div class="drip" style="left:140px;"></div>
+    <div class="drip" style="left:190px;"></div>
+    <div class="cake-mid"></div>
+    <div class="cake-base"></div>
+  </div>
+  <button id="blowBtn">🌬️ Thổi nến</button>
+</div>
 
-    <canvas id="fireworksCanvas"></canvas>
+<!-- SCREEN 4 -->
+<div class="screen" id="finalScreen">
+  <div class="deco">🎈🎂🎈</div>
+  <h2>Chúc mừng sinh nhật Minh Trang</h2>
+  <p>Chúc những điều tốt nhất sẽ đến với cậu!</p>
+  <div class="signature">Háp bi bớt đây 💕</div>
+</div>
 
-    <script>
-        // Kiểm tra mã Code
-        function checkCode() {
-            const codeInput = document.getElementById('code-input').value;
-            // Nhập đúng code (chấp nhận cả viết hoa viết thường)
-            if (codeInput.trim().toLowerCase() === "mtr cte :d") {
-                document.getElementById('auth-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'flex';
-                }, 500);
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
+<script>
+  const codeScreen = document.getElementById('codeScreen');
+  const cardScreen = document.getElementById('cardScreen');
+  const cakeScreen = document.getElementById('cakeScreen');
+  const finalScreen = document.getElementById('finalScreen');
+  const errorMsg = document.getElementById('errorMsg');
+
+  const SECRET_CODE = "Mtr cte :D";
+
+  function goTo(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
+  }
+
+  document.getElementById('submitCode').addEventListener('click', checkCode);
+  document.getElementById('codeInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkCode();
+  });
+
+  function checkCode() {
+    const val = document.getElementById('codeInput').value.trim();
+    if (val === SECRET_CODE) {
+      errorMsg.textContent = '';
+      goTo(cardScreen);
+    } else {
+      errorMsg.textContent = 'Sai mã rồi, thử lại nhé 🙈';
+    }
+  }
+
+  // envelope open
+  const envelope = document.getElementById('envelope');
+  envelope.addEventListener('click', () => {
+    envelope.classList.add('open');
+    setTimeout(() => goTo(cakeScreen), 700);
+  });
+
+  // blow candles
+  const blowBtn = document.getElementById('blowBtn');
+  blowBtn.addEventListener('click', () => {
+    blowBtn.disabled = true;
+    document.querySelectorAll('.candle-flame').forEach((f, i) => {
+      setTimeout(() => {
+        f.style.opacity = '0';
+        f.style.transform += ' scale(0)';
+      }, i * 150);
+    });
+    setTimeout(() => {
+      startFireworks();
+    }, 700);
+    setTimeout(() => {
+      stopFireworks();
+      goTo(finalScreen);
+    }, 4200);
+  });
+
+  // ---------- Fireworks ----------
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  let fwParticles = [];
+  let fwRunning = false;
+  let fwLauncherId = null;
+  let fwAnimId = null;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function randColor() {
+    const colors = ['#ff6fa5','#ffd166','#06d6a0','#118ab2','#ef476f','#ffe6f7','#c77dff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function launchFirework() {
+    const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+    const y = canvas.height;
+    const targetY = Math.random() * canvas.height * 0.4 + canvas.height * 0.15;
+    const color = randColor();
+    fwParticles.push({
+      type: 'rocket', x, y, targetY, color,
+      vy: -8 - Math.random() * 2
+    });
+  }
+
+  function explode(x, y, color) {
+    const count = 40;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count;
+      const speed = 2 + Math.random() * 3;
+      fwParticles.push({
+        type: 'spark',
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        alpha: 1,
+        color
+      });
+    }
+  }
+
+  function fwLoop() {
+    ctx.fillStyle = 'rgba(20,10,40,0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    fwParticles.forEach(p => {
+      if (p.type === 'rocket') {
+        p.y += p.vy;
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        if (p.y <= p.targetY) {
+          p.dead = true;
+          explode(p.x, p.y, p.color);
         }
+      } else if (p.type === 'spark') {
+        p.vy += 0.05;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.018;
+        if (p.alpha <= 0) p.dead = true;
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(p.alpha, 0);
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    });
 
-        // Mở thiệp và hiện bánh kem
-        function openCard() {
-            const card = document.getElementById('birthday-card');
-            if(!card.classList.contains('open')) {
-                card.classList.add('open');
-                
-                // Hiện bánh kem từ từ sau khi thiệp mở ra
-                setTimeout(() => {
-                    const cakeContainer = document.getElementById('cake-container');
-                    cakeContainer.style.display = 'flex';
-                    setTimeout(() => cakeContainer.style.opacity = '1', 50);
-                }, 800);
-            }
-        }
+    fwParticles = fwParticles.filter(p => !p.dead);
+    fwAnimId = requestAnimationFrame(fwLoop);
+  }
 
-        // Thổi nến, kích hoạt pháo hoa và hiện lời chúc
-        function blowCandle() {
-            // Tắt nến
-            document.getElementById('candle').classList.add('off');
-            document.getElementById('blow-btn').style.display = 'none';
-            
-            // Ẩn thiệp và bánh đi để nhường chỗ cho lời chúc phóng to
-            setTimeout(() => {
-                document.getElementById('birthday-card').style.display = 'none';
-                document.getElementById('cake-container').style.display = 'none';
-                
-                // Hiện lời chúc lung linh
-                document.getElementById('wishes-box').style.display = 'block';
-                
-                // Bắt đầu bắn pháo hoa
-                initFireworks();
-            }, 1000);
-        }
+  function startFireworks() {
+    fwRunning = true;
+    fwParticles = [];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    fwLoop();
+    launchFirework();
+    fwLauncherId = setInterval(launchFirework, 350);
+  }
 
-        /* --- ĐOẠN CODE HIỆU ỨNG PHÁO HOA (CANVAS) --- */
-        const canvas = document.getElementById('fireworksCanvas');
-        const ctx = canvas.getContext('2d');
-        let fireworks = [];
-        let particles = [];
+  function stopFireworks() {
+    clearInterval(fwLauncherId);
+    cancelAnimationFrame(fwAnimId);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    fwParticles = [];
+    fwRunning = false;
+  }
+</script>
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        class Firework {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height;
-                this.targetY = Math.random() * (canvas.height * 0.5);
-                this.speed = 5 + Math.random() * 5;
-                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-            }
-            update() {
-                this.y -= this.speed;
-                if (this.y <= this.targetY) {
-                    createParticles(this.x, this.y, this.color);
-                    return false;
-                }
-                return true;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                this.angle = Math.random() * Math.PI * 2;
-                this.speed = 1 + Math.random() * 6;
-                this.friction = 0.95;
-                this.gravity = 0.1;
-                this.alpha = 1;
-                this.decay = 0.01 + Math.random() * 0.02;
-            }
-            update() {
-                this.speed *= this.friction;
-                this.x += Math.cos(this.angle) * this.speed;
-                this.y += Math.sin(this.angle) * this.speed + this.gravity;
-                this.alpha -= this.decay;
-                return this.alpha > 0;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function createParticles(x, y, color) {
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle(x, y, color));
-            }
-        }
-
-        function initFireworks() {
-            resizeCanvas();
-            animate();
-            // Cứ mỗi 500ms tạo ra 1 quả pháo mới
-            setInterval(() => {
-                if (fireworks.length < 5) {
-                    fireworks.push(new Firework());
-                }
-            }, 500);
-        }
-
-        function animate() {
-            ctx.fillStyle = 'rgba(255, 228, 225, 0.2)'; // Tạo hiệu ứng đuôi mờ cho pháo hoa trên nền hồng
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            fireworks = fireworks.filter(f => {
-                f.draw();
-                return f.update();
-            });
-
-            particles = particles.filter(p => {
-                p.draw();
-                return p.update();
-            });
-
-            requestAnimationFrame(animate);
-        }
-    </script>
 </body>
 </html>
