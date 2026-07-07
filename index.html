@@ -2,18 +2,24 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Chúc mừng sinh nhật Minh Trang</title>
 <style>
   * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+  }
   body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh;
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(135deg, #2b1055, #7597de);
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
   }
 
@@ -24,6 +30,9 @@
     justify-content: center;
     text-align: center;
     padding: 20px;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     animation: fadeIn 0.8s ease;
     z-index: 2;
   }
@@ -37,14 +46,14 @@
   /* ---------- SCREEN 1: nhập mã ---------- */
   #codeScreen h1 {
     color: #ffe6f7;
-    font-size: 28px;
+    font-size: clamp(20px, 6vw, 28px);
     margin-bottom: 8px;
     text-shadow: 0 0 12px rgba(255,182,230,0.6);
   }
   #codeScreen p {
     color: #dcd3ff;
     margin-bottom: 24px;
-    font-size: 15px;
+    font-size: clamp(13px, 3.5vw, 15px);
   }
   #codeInput {
     padding: 12px 18px;
@@ -53,7 +62,8 @@
     outline: none;
     font-size: 16px;
     text-align: center;
-    width: 240px;
+    width: 100%;
+    max-width: 240px;
     letter-spacing: 1px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   }
@@ -65,7 +75,7 @@
     background: linear-gradient(135deg, #ff9ecb, #ff6fa5);
     color: white;
     font-weight: bold;
-    font-size: 15px;
+    font-size: clamp(14px, 3.5vw, 15px);
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255,111,165,0.5);
     transition: transform 0.2s;
@@ -82,11 +92,13 @@
   #cardScreen h2 {
     color: #ffe6f7;
     margin-bottom: 30px;
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px);
   }
   .envelope {
-    width: 260px;
-    height: 180px;
+    --ew: clamp(190px, 62vw, 260px);
+    width: var(--ew);
+    aspect-ratio: 260 / 180;
+    height: auto;
     position: relative;
     cursor: pointer;
     perspective: 1000px;
@@ -106,9 +118,9 @@
     left: 0;
     width: 100%;
     height: 0;
-    border-left: 130px solid transparent;
-    border-right: 130px solid transparent;
-    border-top: 100px solid #ffb6d9;
+    border-left: calc(var(--ew) / 2) solid transparent;
+    border-right: calc(var(--ew) / 2) solid transparent;
+    border-top: calc(var(--ew) * 100 / 260) solid #ffb6d9;
     transform-origin: top;
     transition: transform 0.6s ease;
     z-index: 3;
@@ -119,10 +131,10 @@
   }
   .heart-seal {
     position: absolute;
-    top: 40px;
+    top: calc(var(--ew) * 40 / 260);
     left: 50%;
     transform: translateX(-50%);
-    font-size: 28px;
+    font-size: clamp(22px, 7vw, 28px);
     z-index: 4;
     transition: opacity 0.3s;
   }
@@ -137,27 +149,29 @@
   /* ---------- SCREEN 3: bánh + nến ---------- */
   #cakeScreen h2 {
     color: #ffe6f7;
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px);
     margin-bottom: 10px;
   }
   #cakeScreen p.sub {
     color: #e0d4ff;
-    font-size: 14px;
+    font-size: clamp(13px, 3.5vw, 14px);
     margin-bottom: 10px;
   }
   .cake-wrap {
+    --cw: clamp(190px, 58vw, 240px);
     position: relative;
-    width: 240px;
-    height: 220px;
+    width: var(--cw);
+    aspect-ratio: 240 / 220;
+    height: auto;
     margin: 10px 0 20px;
   }
   .candle-flame {
-    width: 8px;
-    height: 16px;
+    width: calc(var(--cw) * 8 / 240);
+    height: calc(var(--cw) * 16 / 240);
     background: radial-gradient(circle, #fff3b0, #ffb703 60%, #fb8500);
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     position: absolute;
-    top: -18px;
+    top: calc(var(--cw) * -18 / 240);
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 0 0 10px 3px rgba(255,183,3,0.8);
@@ -170,32 +184,32 @@
   }
   .candle {
     position: absolute;
-    bottom: 130px;
-    width: 8px;
-    height: 40px;
+    bottom: calc(var(--cw) * 130 / 240);
+    width: calc(var(--cw) * 8 / 240);
+    height: calc(var(--cw) * 40 / 240);
     background: repeating-linear-gradient(45deg, #ff5da2, #ff5da2 4px, #fff 4px, #fff 8px);
     border-radius: 2px;
   }
-  .candle1 { left: 60px; }
-  .candle2 { left: 116px; }
-  .candle3 { left: 172px; }
+  .candle1 { left: calc(var(--cw) * 60 / 240); }
+  .candle2 { left: calc(var(--cw) * 116 / 240); }
+  .candle3 { left: calc(var(--cw) * 172 / 240); }
 
   .cake-top {
     position: absolute;
-    bottom: 90px;
-    left: 30px;
-    width: 180px;
-    height: 40px;
+    bottom: calc(var(--cw) * 90 / 240);
+    left: calc(var(--cw) * 30 / 240);
+    width: calc(var(--cw) * 180 / 240);
+    height: calc(var(--cw) * 40 / 240);
     background: #fff0f6;
     border-radius: 20px 20px 0 0;
     box-shadow: inset 0 -6px 0 rgba(255,182,213,0.6);
   }
   .cake-mid {
     position: absolute;
-    bottom: 45px;
-    left: 15px;
-    width: 210px;
-    height: 50px;
+    bottom: calc(var(--cw) * 45 / 240);
+    left: calc(var(--cw) * 15 / 240);
+    width: calc(var(--cw) * 210 / 240);
+    height: calc(var(--cw) * 50 / 240);
     background: #ffd6ea;
     border-radius: 14px;
     box-shadow: inset 0 -8px 0 rgba(255,143,190,0.5);
@@ -204,17 +218,17 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 240px;
-    height: 50px;
+    width: var(--cw);
+    height: calc(var(--cw) * 50 / 240);
     background: #ff8fbe;
     border-radius: 14px;
     box-shadow: inset 0 -10px 0 rgba(214,64,122,0.5);
   }
   .drip {
     position: absolute;
-    bottom: 85px;
-    width: 10px;
-    height: 16px;
+    bottom: calc(var(--cw) * 85 / 240);
+    width: calc(var(--cw) * 10 / 240);
+    height: calc(var(--cw) * 16 / 240);
     background: #ffb6d9;
     border-radius: 0 0 8px 8px;
   }
@@ -226,7 +240,7 @@
     background: linear-gradient(135deg, #ffb6d9, #ff6fa5);
     color: white;
     font-weight: bold;
-    font-size: 15px;
+    font-size: clamp(14px, 3.5vw, 15px);
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255,111,165,0.5);
     transition: transform 0.2s;
